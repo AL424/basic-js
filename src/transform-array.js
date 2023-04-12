@@ -13,9 +13,37 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function transform(arr) {
+  if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!")
+  
+  const func = ['--discard-next', '--discard-prev', '--double-next', '--double-prev']
+
+  const resultArr = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    let item = arr[i];
+
+    //добавляю в массив обычный элемент
+    if (func.indexOf(item) === -1) resultArr.push(item);
+
+    else if (func.indexOf(item) === 0) {
+      //добавляю в массив undefined и пропускаю индекс следующего элемента
+      resultArr.push(undefined); 
+      i++;
+    } else if (func.indexOf(item) === 1) {
+      //удаляю предыдущий элемент, если он удален до этого, из массива результов удалится undefined
+      resultArr.pop();
+    }
+    else if (func.indexOf(item) === 2) {
+      resultArr.push(arr[i+1], arr[i+1]);
+      i++;
+    } else if (func.indexOf(item) === 3) {
+      //дублирую последний элемент, есди он был удален, дублируется undefined
+      resultArr.push(resultArr[resultArr.length - 1]); 
+    }
+  }
+
+  return resultArr.filter(item => item !== undefined);
 }
 
 module.exports = {
